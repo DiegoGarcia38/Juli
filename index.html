@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Juliana 💕</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 25%, #f3e5f5 50%, #e1bee7 75%, #d1c4e9 100%);
+            cursor: none;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 100;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 1s ease;
+            pointer-events: none;
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        #message.show {
+            opacity: 1;
+            pointer-events: auto;  
+        }
+        
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ff6b9d, #ffd93d, #80deea, #e1bee7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+        
+        .subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 2.5rem;
+            color: #f06292;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+        
+        .question {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #f06292;
+            margin: 2rem 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        #startBtn {
+            padding: 18px 40px;
+            font-size: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            background: linear-gradient(45deg, #f06292, #ffd54f);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(240, 98, 146, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        #startBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(240, 98, 146, 0.6);
+        }
+        
+        #startBtn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ffd54f, #f06292);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 50px;
+        }
+        
+        #startBtn:hover::after {
+            opacity: 1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            color: #f06292;
+            font-size: 2.5rem;
+            animation: floatHeart 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 50;
+            text-shadow: 0 0 15px rgba(255, 107, 157, 0.7);
+        }
+        
+        .cursor-glow {
+            position: fixed;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, rgba(240, 98, 146, 0.9) 0%, rgba(240, 98, 146, 0.3) 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 200;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 20px rgba(240, 98, 146, 0.8);
+        }
+        
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 15px rgba(240, 98, 146, 0.8)); }
+            100% { filter: drop-shadow(0 0 35px rgba(240, 98, 146, 1)); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-30px) rotate(180deg); opacity: 1; }
+        }
+        
+        #music-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 200;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(240, 98, 146, 0.6);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #music-toggle:hover {
+            background: rgba(240, 98, 146, 0.4);
+            transform: scale(1.15);
+        }
+        
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(240, 98, 146, 0.7);
+            transform: scale(0);
+            animation: rippleEffect 0.8s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes rippleEffect {
+            to {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+        
+        .response-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .response-btn {
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        #yesBtn {
+            background: linear-gradient(45deg, #66bb6a, #81c784);
+            color: white;
+        }
+        
+        #noBtn {
+            background: linear-gradient(45deg, #ef5350, #e57373);
+            color: white;
+        }
+        
+        .response-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 50px;
+        }
+        
+        .response-btn:hover::after {
+            opacity: 1;
+        }
+        
+        .love-letter {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 1.5s ease-out;
+            text-align: left;
+            padding: 0 20px;
+            color: #5d4037;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .love-letter.show {
+            max-height: 500px;
+            padding: 25px;
+        }
+        
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            text-align: right;
+            margin-top: 20px;
+            color: #f06292;
+        }
+        
+        .final-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 150;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 1.5s ease;
+        }
+        
+        .final-message.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="cursor-glow"></div>
+        
+        <div id="music-toggle" title="🎵">
+            <span style="color: #f06292; font-size: 1.5rem;">🎵</span>
+        </div>
+        
+        <div id="message">
+            <h1 class="main-title">Querida Juliana</h1>
+            <p class="subtitle">Haz clic en las ranitas para descubrir un mensaje especial que llevo en mi corazón...</p>
+            <button id="startBtn">Descubrir mi Corazón ✨</button>
+        </div>
+        
+        <!-- Floating hearts -->
+        <div class="floating-heart" style="top: 10%; left: 15%; animation-delay: 0s;">💖</div>
+        <div class="floating-heart" style="top: 20%; right: 20%; animation-delay: 1.2s;">💝</div>
+        <div class="floating-heart" style="bottom: 30%; left: 10%; animation-delay: 2.4s;">💕</div>
+        <div class="floating-heart" style="bottom: 20%; right: 15%; animation-delay: 3.6s;">💘</div>
+        <div class="floating-heart" style="top: 60%; left: 5%; animation-delay: 0.8s;">🌸</div>
+        <div class="floating-heart" style="top: 40%; right: 10%; animation-delay: 1.8s;">🌷</div>
+        
+        <div id="finalMessage" class="final-message">
+            <h1 class="main-title">¡Eres la respuesta a mis sueños!</h1>
+            <p class="subtitle">Cada día a tu lado es un regalo que atesoro con todo mi corazón</p>
+            <div class="love-letter" id="loveLetter">
+                <p>Mi querida Juliana,</p>
+                <p>Desde el momento en que entraste en mi vida, todo cobró un nuevo sentido. Tu sonrisa ilumina mis días más grises y tu presencia llena mi mundo de colores que nunca antes había visto.</p>
+                <p>Eres esa persona con la que quiero compartir mis alegrías, mis sueños y mis silencios. Cada conversación contigo es un tesoro, cuando vemos peliculas y compartimos tiempo juntos, 
+                <p>Siento que olvido todos mis problemas, y cada vez que escucho tu risa, es una melodía que guardo en mi corazón.</p>
+                <p>Hoy, con el corazón latiendo fuerte, quiero preguntarte si me das el honor de ser tu noviecito 😻. ¿Aceptas ser mi novia y permitirme demostrarte cada día lo especial que eres para mí?</p>
+                <p>Con todo mi amor,</p>
+                <div class="signature">Para siempre tuyo</div>
+            </div>
+            <div class="response-buttons">
+                <button id="yesBtn" class="response-btn">¡Sí, acepto! 💕</button>
+                <button id="noBtn" class="response-btn">Todavía no</button>
+            </div>
+        </div>
+    </div>
+    <audio id="bgMusic" src="musica/Bonita.mp3" loop preload="auto"></audio>
+
+    <script>
+        let scene, camera, renderer, frogs = [], particles = [], currentStep = 0;
+        let mouseX = 0, mouseY = 0;
+        let isPlaying = false;
+        let raycaster = new THREE.Raycaster();
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        let mouse = new THREE.Vector2();
+        
+        const messages = [
+            "Cada vez que te veo, mi corazón late más fuerte...",
+            "Tu sonrisa ilumina mis días más que el sol ☀️",
+            "Eres la persona más especial que he conocido",
+            "Contigo, cada momento se convierte en un recuerdo inolvidable",
+            "Juliana, ¿me harías el hombre más feliz del mundo?",
+            "¿Quieres ser mi novia y compartir esta aventura juntos? 💕"
+        ];
+        
+        // Paleta de colores pastel mejorada
+        const pastelColors = [
+            0xFFCDD2, // Rosa pastel muy claro
+            0xF8BBD0, // Rosa pastel
+            0xFFECB3, // Amarillo pastel
+            0xE1F5FE, // Cyan pastel
+            0xF3E5F5, // Púrpura pastel
+            0xC8E6C9, // Verde pastel
+            0xFFF9C4, // Amarillo claro
+            0xB3E5FC, // Azul pastel
+            0xFFCCBC, // Naranja pastel
+            0xE1BEE7  // Lila pastel
+        ];
+        
+        function init() {
+            // Cursor personalizado
+            const cursor = document.querySelector('.cursor-glow');
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                cursor.style.left = e.clientX - 12 + 'px';
+                cursor.style.top = e.clientY - 12 + 'px';
+            });
+            
+            // Efectos de clic
+            document.addEventListener('click', createRipple);
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xfafafa);
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+            pointLight.position.set(10, 10, 10);
+            scene.add(pointLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(0, 10, 5);
+            scene.add(directionalLight);
+            
+            // Create magical frogs
+            createFrogs();
+            createParticles();
+            
+            camera.position.z = 15;
+            
+            // Event listeners
+            document.getElementById('startBtn').addEventListener('click', startExperience);
+            document.getElementById('music-toggle').addEventListener('click', toggleMusic);
+            document.getElementById('yesBtn').addEventListener('click', showLoveLetter);
+            document.getElementById('noBtn').addEventListener('click', () => {
+                document.getElementById('message').innerHTML = `
+                    <h1 class="main-title">¡Te daré todas las razones!</h1>
+                    <p class="subtitle">Mi amor por ti es infinito y nunca me rendiré 💖</p>
+                    <button id="tryAgainBtn" class="response-btn">Volver a intentar</button>
+                `;
+                document.getElementById('tryAgainBtn').addEventListener('click', () => {
+                    document.getElementById('finalMessage').classList.remove('show');
+                    document.getElementById('message').innerHTML = `
+                        <h1 class="main-title">Gracias por darme otra oportunidad</h1>
+                        <p class="subtitle">Ahora sí, ¿aceptas ser mi novia?</p>
+                        <div class="response-buttons">
+                            <button id="yesBtn" class="response-btn">¡Sí, acepto! 💕</button>
+                        </div>
+                    `;
+                    document.getElementById('yesBtn').addEventListener('click', showLoveLetter);
+                });
+            });
+            
+            animate();
+        }
+        
+        function createFrogs() {
+            for (let i = 0; i < 15; i++) {
+                const frogGroup = new THREE.Group();
+                
+                // Cuerpo de la rana
+                const bodyGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+                const bodyMaterial = new THREE.MeshPhongMaterial({ 
+                    color: pastelColors[i % pastelColors.length],
+                    shininess: 100,
+                    transparent: true,
+                    opacity: 0.95
+                });
+                const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+                body.scale.set(1, 0.8, 1.2);
+                frogGroup.add(body);
+                
+                // Ojos
+                const eyeGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+                const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff });
+                
+                const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+                leftEye.position.set(-0.3, 0.5, 0.4);
+                frogGroup.add(leftEye);
+                
+                const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+                rightEye.position.set(0.3, 0.5, 0.4);
+                frogGroup.add(rightEye);
+                
+                // Pupilas
+                const pupilGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+                const pupilMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+                
+                const leftPupil = new THREE.Mesh(pupilGeometry, pupilMaterial);
+                leftPupil.position.set(-0.3, 0.5, 0.5);
+                frogGroup.add(leftPupil);
+                
+                const rightPupil = new THREE.Mesh(pupilGeometry, pupilMaterial);
+                rightPupil.position.set(0.3, 0.5, 0.5);
+                frogGroup.add(rightPupil);
+                
+                // Corazón flotante
+                const heartGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+                const heartMaterial = new THREE.MeshPhongMaterial({ 
+                    color: 0xf06292,
+                    transparent: true,
+                    opacity: 0.9,
+                    emissive: 0xff4081,
+                    emissiveIntensity: 0.5
+                });
+                const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+                heart.position.y = 2;
+                frogGroup.add(heart);
+                
+                // Posición aleatoria
+                const angle = (i / 15) * Math.PI * 2;
+                const radius = 7 + Math.random() * 3;
+                frogGroup.position.x = Math.cos(angle) * radius;
+                frogGroup.position.y = (Math.random() - 0.5) * 6;
+                frogGroup.position.z = Math.sin(angle) * radius;
+                
+                frogGroup.userData = { 
+                    originalY: frogGroup.position.y,
+                    clicked: false,
+                    index: i
+                };
+                
+                scene.add(frogGroup);
+                frogs.push(frogGroup);
+            }
+        }
+        
+        function createParticles() {
+            const particleCount = 300;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 60;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 60;
+                
+                const color = new THREE.Color(pastelColors[Math.floor(Math.random() * pastelColors.length)]);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.18,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: true
+            });
+            
+            const particleSystem = new THREE.Points(geometry, material);
+            scene.add(particleSystem);
+            particles.push(particleSystem);
+        }
+        
+        function startExperience() {
+            document.getElementById('message').innerHTML = `
+                <h1 class="main-title">Mi Juliana Preciosa</h1>
+                <p class="subtitle">Haz clic en las ranitas para descubrir lo que siento por ti...</p>
+            `;
+            
+            // Habilitar interacción con las ranas
+            renderer.domElement.addEventListener('click', onFrogClick);
+            currentStep = 0;
+        }
+        
+        function onFrogClick(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
+            // Buscar intersecciones con todos los objetos de la escena
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            
+            if (intersects.length > 0) {
+                // Encontrar el grupo de la rana padre
+                let frogGroup = intersects[0].object;
+                while (frogGroup.parent && frogGroup.parent !== scene) {
+                    frogGroup = frogGroup.parent;
+                }
+                
+                const frog = frogs.find(f => f === frogGroup);
+                
+                if (frog && !frog.userData.clicked && currentStep < messages.length) {
+                    frog.userData.clicked = true;
+                    
+                    // Animación de la rana
+                    animateFrog(frog);
+                    
+                    // Mostrar mensaje romántico
+                    document.getElementById('message').innerHTML = `
+                        <h1 class="main-title">${messages[currentStep]}</h1>
+                        ${currentStep === messages.length - 1 ? 
+                            '<p class="question">💖 ¿Aceptas ser mi novia? 💖</p>' : 
+                            '<p class="subtitle">Haz clic en otra ranita para continuar...</p>'
+                        }
+                    `;
+                    
+                    currentStep++;
+                    
+                    if (currentStep >= messages.length) {
+                        setTimeout(showFinalQuestion, 2000);
+                    }
+                }
+            }
+        }
+        
+        function animateFrog(frog) {
+            // Salto de la rana
+            const jumpAnimation = () => {
+                const startY = frog.position.y;
+                const jumpHeight = 3;
+                const duration = 1000;
+                const startTime = Date.now();
+                
+                const jump = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = elapsed / duration;
+                    
+                    if (progress < 1) {
+                        const easedProgress = Math.sin(progress * Math.PI);
+                        frog.position.y = startY + jumpHeight * easedProgress;
+                        frog.rotation.y += 0.15;
+                        requestAnimationFrame(jump);
+                    } else {
+                        frog.position.y = startY;
+                    }
+                };
+                jump();
+            };
+            
+            jumpAnimation();
+            
+            // Cambiar color del corazón
+            const heart = frog.children.find(child => child.material && child.material.color.getHex() === 0xf06292);
+            if (heart) {
+                heart.material.color.setHex(0xffd54f); // Amarillo pastel
+                
+                // Emitir pequeños corazones
+                createFlyingHearts(frog.position.x, frog.position.y + 2, frog.position.z);
+            }
+        }
+        
+        function createFlyingHearts(x, y, z) {
+            for (let i = 0; i < 5; i++) {
+                const heartGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const heartMaterial = new THREE.MeshPhongMaterial({ 
+                    color: Math.random() > 0.5 ? 0xf06292 : 0xffd54f,
+                    transparent: true,
+                    opacity: 0.9
+                });
+                const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+                
+                heart.position.set(x, y, z);
+                heart.userData = {
+                    velocityY: 0.1 + Math.random() * 0.1,
+                    rotationSpeed: 0.05 + Math.random() * 0.05
+                };
+                
+                scene.add(heart);
+                
+                // Animación de vuelo
+                const flyAnimation = () => {
+                    heart.position.y += heart.userData.velocityY;
+                    heart.rotation.x += heart.userData.rotationSpeed;
+                    heart.rotation.z += heart.userData.rotationSpeed;
+                    
+                    if (heart.position.y < 15) {
+                        requestAnimationFrame(flyAnimation);
+                    } else {
+                        scene.remove(heart);
+                    }
+                };
+                flyAnimation();
+            }
+        }
+        
+        function showFinalQuestion() {
+            // Todas las ranas saltan al mismo tiempo
+            frogs.forEach((frog, index) => {
+                setTimeout(() => {
+                    animateFrog(frog);
+                }, index * 100);
+            });
+            
+            // Mostrar pregunta final
+            document.getElementById('finalMessage').classList.add('show');
+            document.getElementById('message').style.opacity = '0';
+            document.getElementById('message').style.pointerEvents = 'none';
+        }
+        
+        function showLoveLetter() {
+            document.getElementById('loveLetter').classList.add('show');
+            document.getElementById('yesBtn').style.display = 'none';
+            document.getElementById('noBtn').style.display = 'none';
+            
+            // Lluvia de corazones final
+            createHeartRain();
+        }
+        
+        function createHeartRain() {
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const heartGeometry = new THREE.SphereGeometry(0.3, 12, 12);
+                    const heartMaterial = new THREE.MeshPhongMaterial({ 
+                        color: Math.random() > 0.5 ? 0xf06292 : 0xffd54f,
+                        transparent: true,
+                        opacity: 0.9
+                    });
+                    const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+                    
+                    heart.position.set(
+                        (Math.random() - 0.5) * 40,
+                        20,
+                        (Math.random() - 0.5) * 40
+                    );
+                    
+                    scene.add(heart);
+                    
+                    // Animación de caída
+                    const fallAnimation = () => {
+                        heart.position.y -= 0.2;
+                        heart.rotation.x += 0.1;
+                        heart.rotation.z += 0.08;
+                        
+                        if (heart.position.y > -10) {
+                            requestAnimationFrame(fallAnimation);
+                        } else {
+                            scene.remove(heart);
+                        }
+                    };
+                    fallAnimation();
+                }, i * 100);
+            }
+        }
+        
+        function createRipple(e) {
+            const ripple = document.createElement('div');
+            ripple.classList.add('ripple');
+            
+            const rect = document.body.getBoundingClientRect();
+            const size = 70;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            
+            document.body.appendChild(ripple);
+            
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        }
+        
+        function toggleMusic() {
+            isPlaying = !isPlaying;
+            musicToggleBtn.innerHTML = `<span style="color: #f06292; font-size: 1.5rem;">
+                ${isPlaying ? '🎵' : '🔇'}
+            </span>`;
+
+            if (isPlaying) {
+                window.addEventListener('load', () => {
+                    bgMusic.volume = 0.5;       // volumen entre 0.0 y 1.0
+                    bgMusic.play().catch(e => console.warn('play() falló:', e));
+                });
+            } else {
+                bgMusic.pause();
+            }
+        }
+
+        // asegúrate de asignar el listener:
+        musicToggleBtn.addEventListener('click', toggleMusic);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Animar ranas
+            frogs.forEach((frog, index) => {
+                frog.rotation.y += 0.008;
+                frog.position.y = frog.userData.originalY + Math.sin(time * 0.8 + index) * 0.6;
+                
+                // Animar corazones flotantes
+                const heart = frog.children[frog.children.length - 1];
+                if (heart) {
+                    heart.position.y = 2 + Math.sin(time * 2 + index) * 0.4;
+                    heart.rotation.y += 0.03;
+                    heart.scale.x = heart.scale.y = heart.scale.z = 1 + Math.sin(time * 3) * 0.1;
+                }
+            });
+            
+            // Animar partículas
+            particles.forEach(particle => {
+                particle.rotation.y += 0.001;
+                particle.rotation.x += 0.0005;
+                const positions = particle.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] += Math.sin(time + i) * 0.008;
+                }
+                particle.geometry.attributes.position.needsUpdate = true;
+            });
+            
+            // Efecto de cámara suave
+            camera.position.x += (mouseX * 3 - camera.position.x) * 0.03;
+            camera.position.y += (-mouseY * 3 - camera.position.y) * 0.03;
+            camera.lookAt(scene.position);
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        window.addEventListener('resize', onWindowResize);
+        
+        // Mostrar mensaje inicial después de un momento
+        setTimeout(() => {
+            document.getElementById('message').classList.add('show');
+        }, 500);
+        
+        init();
+    </script>
+</body>
+</html>
